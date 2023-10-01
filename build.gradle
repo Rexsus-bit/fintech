@@ -1,0 +1,43 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '2.7.16'
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id "io.freefair.lombok" version "8.3"
+}
+
+group = 'org'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+repositories {
+	mavenCentral()
+}
+
+task customFatJar(type: Jar) {
+	manifest {
+		attributes 'Main-Class': 'org.projectweather.ProjectweatherApplication'
+	}
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+}
+
+dependencies {
+
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.2'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
