@@ -1,5 +1,8 @@
-package org.projectweather.exceptions;
+package org.projectweather.exceptions.controllerExceptions.handler;
 
+import org.projectweather.exceptions.controllerExceptions.ApiError;
+import org.projectweather.exceptions.controllerExceptions.WeatherIsExistedException;
+import org.projectweather.exceptions.controllerExceptions.WeatherIsNotFoundException;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.validation.FieldError;
@@ -13,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice(basePackages = {"org.projectweather.controller"})
-public class ErrorHandler {
+public class ControllerErrorHandler {
 
     private static final String CONFLICT = "Объект Weather с указанными параметрами уже существует.";
     private static final String NOT_FOUND = "Требуемый объект не найден.";
