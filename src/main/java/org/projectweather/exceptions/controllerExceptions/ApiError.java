@@ -1,4 +1,4 @@
-package org.projectweather.exceptions;
+package org.projectweather.exceptions.controllerExceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

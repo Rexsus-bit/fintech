@@ -1,7 +1,7 @@
 package org.projectweather.service;
 
-import org.projectweather.exceptions.WeatherIsExistedException;
-import org.projectweather.exceptions.WeatherIsNotFoundException;
+import org.projectweather.exceptions.controllerExceptions.WeatherIsExistedException;
+import org.projectweather.exceptions.controllerExceptions.WeatherIsNotFoundException;
 import org.projectweather.model.Weather;
 import org.springframework.stereotype.Service;
 
@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 public class WeatherServiceImpl implements WeatherService {
