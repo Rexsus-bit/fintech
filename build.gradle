@@ -1,47 +1,53 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.16'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-	id "io.freefair.lombok" version "8.3"
+    id 'java'
+    id 'org.springframework.boot' version '2.7.16'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id "io.freefair.lombok" version "8.3"
 }
 
 group = 'org'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+    sourceCompatibility = '17'
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 task customFatJar(type: Jar) {
-	manifest {
-		attributes 'Main-Class': 'org.projectweather.ProjectweatherApplication'
-	}
+    manifest {
+        attributes 'Main-Class': 'org.projectweather.ProjectweatherApplication'
+    }
 
-	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-	with jar
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }
 
 dependencies {
 
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.2'
-	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.1'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux:3.1.2'
-	implementation 'io.github.resilience4j:resilience4j-spring-boot2:2.0.2'
-	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation:3.1.2'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.1'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux:3.1.2'
+    implementation 'io.github.resilience4j:resilience4j-spring-boot2:2.0.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2'
+
+    implementation 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation group: 'org.liquibase', name: 'liquibase-core', version: '4.24.0'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="00000000000002" author="romanbizin">
+        <sql>
+            INSERT INTO city (city_name)
+            VALUES ('Moscow'),
+                   ('Saint Petersburg'),
+                   ('Beijing'),
+                   ('London'),
+                   ('Washington'),
+                   ('Berlin');
+
+            INSERT INTO weather_type (weather_name)
+            VALUES ('Sunny'),
+                   ('Rainy'),
+                   ('Cloudy'),
+                   ('Snowy');
+        </sql>
+
+    </changeSet>
+</databaseChangeLog>
