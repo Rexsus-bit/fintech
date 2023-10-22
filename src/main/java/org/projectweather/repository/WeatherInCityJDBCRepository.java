@@ -1,7 +1,6 @@
 package org.projectweather.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.projectweather.exceptions.dataBaseQuriesExceptions.InvalidDataException;
 import org.projectweather.exceptions.dataBaseQuriesExceptions.WeatherInCityIsNotFoundException;
 import org.projectweather.model.weatherInCity.City;
 import org.projectweather.model.weatherInCity.WeatherInCity;
@@ -15,15 +14,18 @@ import org.springframework.stereotype.Repository;
 import java.sql.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Repository("weatherInCityJDBCRepository")
 @RequiredArgsConstructor
 public class WeatherInCityJDBCRepository {
 
     private final JdbcTemplate jdbcTemplate;
+    private final CityJDBCRepository cityJDBCRepository;
+    private final WeatherTypeJDBCRepository weatherTypeJDBCRepository;
 
     public WeatherInCity createWeatherInCity(WeatherInCity weatherInCity) {
-        validation(weatherInCity);
+        setupIdForWeatherTypeAndCity(weatherInCity);
         String sqlQuery = "INSERT INTO weather_in_city (weather_in_city_id, city_id, weather_id, weather_datetime)" +
                 " VALUES (DEFAULT, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -34,34 +36,27 @@ public class WeatherInCityJDBCRepository {
             stmt.setTimestamp(3, Timestamp.from(weatherInCity.getUnixDateTime()));
             return stmt;
         }, keyHolder);
-
-        long cityIdFromDb = Objects.requireNonNull(keyHolder.getKey()).longValue();
-        weatherInCity.setId(cityIdFromDb);
+        long weatherInCityIdFromDb = Objects.requireNonNull(keyHolder.getKey()).longValue();
+        weatherInCity.setId(weatherInCityIdFromDb);
         return weatherInCity;
     }
 
-    private void validation(WeatherInCity weatherInCity) {
-        if (!doesCityExist(weatherInCity.getCity().getId())) {
-            throw new InvalidDataException("Указанный город отсутствует в справочнике");
+    private void setupIdForWeatherTypeAndCity(WeatherInCity weatherInCity) {
+        Optional<City> cityOpt = cityJDBCRepository.findCityByName(weatherInCity.getCity().getName());
+        Optional<WeatherType> weatherTypeOpt = weatherTypeJDBCRepository.findWeatherTypeByName(weatherInCity.getWeatherType().getName());
+        if (cityOpt.isEmpty()) {
+            weatherInCity.getCity().setId(cityJDBCRepository.createCity(weatherInCity.getCity()).getId());
+        } else {
+            weatherInCity.getCity().setId(cityOpt.get().getId());
         }
-        if (!doesWeatherTypeExist(weatherInCity.getWeatherType().getId())) {
-            throw new InvalidDataException("Указанный тип погоды отсутствует в справочнике");
+        if (weatherTypeOpt.isEmpty()) {
+            weatherInCity.getWeatherType().setId(weatherTypeJDBCRepository.createWeatherType(weatherInCity.getWeatherType()).getId());
+        } else {
+            weatherInCity.getWeatherType().setId(weatherTypeOpt.get().getId());
         }
     }
 
-    private boolean doesWeatherTypeExist(Long id) {
-        String sqlQuery = "SELECT count(*) FROM weather_type WHERE weather_id = ?";
-        long result = jdbcTemplate.queryForObject(sqlQuery, Long.class, id);
-        return result == 1;
-    }
-
-    private boolean doesCityExist(Long id) {
-        String sqlQuery = "SELECT count(*) FROM city WHERE city_id = ?";
-        long result = jdbcTemplate.queryForObject(sqlQuery, Long.class, id);
-        return result == 1;
-    }
-
-    public WeatherInCity findWeatherInCityById(Long id) throws RuntimeException {
+    public WeatherInCity findWeatherInCityById(Long id) {
         String sqlQuery = "SELECT win.weather_in_city_id, win.city_id, win.weather_id, win.weather_datetime, " +
                 "c.city_name, w.weather_name FROM weather_in_city win JOIN city c ON win.city_id = c.city_id " +
                 "JOIN weather_type w ON win.weather_id = w.weather_id WHERE win.weather_in_city_id = ?";
@@ -72,7 +67,7 @@ public class WeatherInCityJDBCRepository {
         }
     }
 
-    public List<WeatherInCity> findAllWeatherInCity() throws RuntimeException {
+    public List<WeatherInCity> findAllWeatherInCity() {
         String sqlQuery = "SELECT * FROM weather_in_city win JOIN city c ON win.city_id = c.city_id " +
                 "JOIN weather_type w ON win.weather_id = w.weather_id";
         return jdbcTemplate.query(sqlQuery, this::mapRowToWeatherInCity);
@@ -94,7 +89,7 @@ public class WeatherInCityJDBCRepository {
     }
 
     public WeatherInCity updateWeatherInCity(WeatherInCity weatherInCity) {
-        validation(weatherInCity);
+        setupIdForWeatherTypeAndCity(weatherInCity);
         String sqlQuery = "UPDATE weather_in_city SET city_id = ?, weather_id = ?, weather_datetime = ?" +
                 "WHERE weather_in_city_id = ?";
         int updatesNumber = jdbcTemplate.update(sqlQuery,
@@ -107,17 +102,11 @@ public class WeatherInCityJDBCRepository {
     }
 
     public void deleteWeatherInCityById(Long id) {
-        if (!doesWeatherInCityExist(id)){
+        String sqlQuery = "DELETE FROM weather_in_city WHERE weather_in_city_id = ?";
+        long result = jdbcTemplate.update(sqlQuery, id);
+        if (result == 0) {
             throw new WeatherInCityIsNotFoundException(id);
         }
-        String sqlQuery = "DELETE FROM weather_in_city WHERE weather_in_city_id = ?";
-        jdbcTemplate.update(sqlQuery, id);
-    }
-
-    private boolean doesWeatherInCityExist(Long id) {
-        String sqlQuery = "SELECT count(*) FROM weather_in_city WHERE weather_in_city_id = ?";
-        long result = jdbcTemplate.queryForObject(sqlQuery, Long.class, id);
-        return result == 1;
     }
 
 }
