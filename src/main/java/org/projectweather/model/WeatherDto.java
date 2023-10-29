@@ -1,12 +1,13 @@
 package org.projectweather.model;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -17,7 +18,7 @@ import java.time.ZonedDateTime;
 public class WeatherDto {
 
     @NotNull
-    private Long regionID;
+    private Long regionId;
     @NotBlank(message = "Должно быть указано название региона.")
     private String regionName;
     @NotNull
@@ -25,7 +26,8 @@ public class WeatherDto {
     @Min(value = -100, message = "Температура должна быть не меньше -100")
     private Integer temperature;
     @NotNull
-    private ZonedDateTime zonedDateTime;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDateTime localDateTime;
 
 
 }

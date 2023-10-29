@@ -1,0 +1,27 @@
+{
+  "location": {
+    "name": "London",
+    "region": "City of London, Greater London",
+    "country": "United Kingdom",
+    "lat": 51.52,
+    "lon": -0.11,
+    "tz_id": "Europe/London",
+    "localtime_epoch": 1698336843,
+    "localtime": "2023-10-26 17:14"
+  },
+  "current": {
+    "last_updated_epoch": 1698336000,
+    "last_updated": "2023-10-26 17:00",
+    "temp_c": 16.0,
+    "temp_f": 60.8,
+    "is_day": 1,
+    "condition": {
+      "text": "Light rain",
+      "icon": "//cdn.weatherapi.com/weather/64x64/day/296.png",
+      "code": 1183
+    },
+    "cloud": 50,
+    "uv": 3.0
+  }
+}
+

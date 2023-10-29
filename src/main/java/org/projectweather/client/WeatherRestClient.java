@@ -1,8 +1,10 @@
 package org.projectweather.client;
 
 import io.github.resilience4j.ratelimiter.RateLimiter;
+import lombok.AllArgsConstructor;
 import org.projectweather.model.weatherApiDto.WeatherApiDto;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -19,7 +21,7 @@ public class WeatherRestClient {
 
     private final RestTemplate restTemplate;
     private final RateLimiter weatherRateLimiter;
-
+    
     public WeatherRestClient(@Qualifier("weatherRestTemplate") RestTemplate restTemplate,
                              @Qualifier("weatherLimiter") RateLimiter rateLimiter) {
         this.weatherRateLimiter = rateLimiter;
@@ -30,11 +32,11 @@ public class WeatherRestClient {
         return RateLimiter.decorateSupplier(weatherRateLimiter, () -> {
             HttpHeaders headers = new HttpHeaders();
             HttpEntity<HttpHeaders> entity = new HttpEntity<>(headers);
-            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + ("v1/current.json"))
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(url + ("/v1/current.json"))
                     .queryParam("q", regionName);
             ResponseEntity<WeatherApiDto> weatherApiDtoResponseEntity =
                     restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, WeatherApiDto.class);
-                       return weatherApiDtoResponseEntity.getBody();
+            return weatherApiDtoResponseEntity.getBody();
         }).get();
     }
 }

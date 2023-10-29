@@ -1,6 +1,7 @@
 package org.projectweather.model.weatherApiDto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
@@ -9,7 +10,11 @@ import lombok.*;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
+@EqualsAndHashCode
 public class Current {
-    int temp_c;
-    Condition condition;
+
+    @JsonProperty("temp_c")
+    private Integer temperature;
+    private Condition condition;
+
 }

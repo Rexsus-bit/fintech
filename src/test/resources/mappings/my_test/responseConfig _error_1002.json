@@ -1,0 +1,23 @@
+{
+  "request": {
+    "urlPathPattern": "/v1/current.json",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "UnknownCity"
+      }
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "error": {
+        "code": 1002,
+        "message": "UnknownCity"
+      }
+    }
+  }
+}

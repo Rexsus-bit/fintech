@@ -1,0 +1,13 @@
+{
+  "request": {
+    "urlPathPattern": "/v1/current.json",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "Response.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

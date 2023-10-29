@@ -13,6 +13,7 @@ import java.time.ZoneId;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
+@EqualsAndHashCode
 public class Location {
     String name;
     String region;

@@ -11,12 +11,12 @@ public class WeatherMapper {
 
     public static WeatherDto toWeatherDto(Weather weather) {
         return  new WeatherDto(weather.getRegionId(), weather.getRegionName(), weather.getTemperature(),
-                weather.getZonedDateTime());
+                weather.getLocalDateTime());
     }
 
     public static Weather fromWeatherDto(WeatherDto weatherDto, Long regionId) {
         return new Weather(regionId, weatherDto.getRegionName(), weatherDto.getTemperature(),
-                weatherDto.getZonedDateTime());
+                weatherDto.getLocalDateTime());
     }
     public static WeatherInCity weatherApiToWeatherInCity(WeatherApiDto weatherApiDto) {
         return WeatherInCity.builder()
@@ -28,5 +28,11 @@ public class WeatherMapper {
                         .build())
                 .unixDateTime(weatherApiDto.getLocation().getUnixTime())
                 .build();
+    }
+
+    public static WeatherInCity weatherApiDtoToWeatherInCity(WeatherApiDto weatherApiDto){
+        return new WeatherInCity(null, new City(null, weatherApiDto.getLocation().getName()),
+                new WeatherType(null, weatherApiDto.getLocation().getName()),
+                weatherApiDto.getLocation().getUnixTime());
     }
 }

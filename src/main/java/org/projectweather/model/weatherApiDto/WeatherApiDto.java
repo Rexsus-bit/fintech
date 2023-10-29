@@ -10,10 +10,11 @@ import lombok.*;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
+@EqualsAndHashCode
 public class WeatherApiDto {
 
-    Location location;
-    Current current;
+    private Location location;
+    private Current current;
 
 }
 

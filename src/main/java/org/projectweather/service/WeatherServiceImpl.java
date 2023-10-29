@@ -19,8 +19,8 @@ public class WeatherServiceImpl implements WeatherService {
     @Override
     public List<Weather> getWeatherForTheCurrentDate(Long regionId) throws WeatherIsNotFoundException {
         List<Weather> weatherWithRequestedIdList = dataStorageList.stream().filter(o -> o.getRegionId() == regionId
-                && o.getZonedDateTime().toLocalDate().getYear() == (LocalDateTime.now().getYear())
-                && o.getZonedDateTime().toLocalDate().getDayOfYear() == (LocalDateTime.now().getDayOfYear())).toList();
+                && o.getLocalDateTime().toLocalDate().getYear() == (LocalDateTime.now().getYear())
+                && o.getLocalDateTime().toLocalDate().getDayOfYear() == (LocalDateTime.now().getDayOfYear())).toList();
         if (weatherWithRequestedIdList.size() == 0) {
             throw new WeatherIsNotFoundException(regionId, LocalDate.now());
         }
@@ -32,8 +32,8 @@ public class WeatherServiceImpl implements WeatherService {
         if (dataStorageList.stream().anyMatch(o -> o.getRegionId() == weather.getRegionId()
                 && o.getRegionName().equals(weather.getRegionName())
                 && o.getTemperature() == weather.getTemperature()
-                && o.getZonedDateTime().equals(weather.getZonedDateTime()))) {
-            throw new WeatherIsExistedException(weather.getRegionId(), weather.getZonedDateTime());
+                && o.getLocalDateTime().equals(weather.getLocalDateTime()))) {
+            throw new WeatherIsExistedException(weather.getRegionId(), weather.getLocalDateTime());
         }
         dataStorageList.add(weather);
         return weather;
@@ -43,7 +43,7 @@ public class WeatherServiceImpl implements WeatherService {
     public Weather updateWeatherTemperatureForTheCity(Weather weather) {
         dataStorageList.removeIf(o -> o.getRegionId() == weather.getRegionId()
                 && o.getRegionName().equals(weather.getRegionName())
-                && o.getZonedDateTime().equals(weather.getZonedDateTime()));
+                && o.getLocalDateTime().equals(weather.getLocalDateTime()));
         dataStorageList.add(weather);
         return weather;
     }
