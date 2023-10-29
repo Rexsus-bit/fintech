@@ -2,6 +2,7 @@ package org.projectweather.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.projectweather.exceptions.controllerExceptions.WeatherIsExistedException;
 import org.projectweather.exceptions.controllerExceptions.WeatherIsNotFoundException;
@@ -10,11 +11,11 @@ import org.projectweather.model.WeatherDto;
 import org.projectweather.service.WeatherService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static org.projectweather.mapper.WeatherMapper.fromWeatherDto;
 import static org.projectweather.mapper.WeatherMapper.toWeatherDto;
+
 
 @RestController
 @RequiredArgsConstructor

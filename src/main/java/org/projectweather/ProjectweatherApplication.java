@@ -4,6 +4,7 @@ import org.h2.tools.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 import java.sql.SQLException;
 
@@ -15,6 +16,7 @@ public class ProjectweatherApplication {
 		SpringApplication.run(ProjectweatherApplication.class, args);
 	}
 
+	@Profile("!Test")
 	@Bean(initMethod = "start", destroyMethod = "stop")
 	public Server inMemoryH2DatabaseServer() throws SQLException {
 		return Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9091");

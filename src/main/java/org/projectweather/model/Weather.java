@@ -1,7 +1,8 @@
 package org.projectweather.model;
 
 import lombok.*;
-import java.time.ZonedDateTime;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -13,7 +14,7 @@ public class Weather {
     private long regionId;
     private String regionName;
     private int temperature;
-    private ZonedDateTime zonedDateTime;
+    private LocalDateTime localDateTime;
 
 }
 

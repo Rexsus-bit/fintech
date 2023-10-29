@@ -13,11 +13,12 @@ import java.time.ZoneId;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
+@EqualsAndHashCode
 public class Location {
-    String name;
-    String region;
-    String country;
-    ZoneId tz_id;
+    private String name;
+    private String region;
+    private String country;
+    private ZoneId tz_id;
     @JsonProperty("localtime_epoch")
-    Instant unixTime;
+    private Instant unixTime;
 }

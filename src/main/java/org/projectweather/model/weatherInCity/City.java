@@ -1,8 +1,8 @@
 package org.projectweather.model.weatherInCity;
 
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
 
 @Builder
 @Getter
