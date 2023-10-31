@@ -1,19 +1,21 @@
 package org.projectweather.util;
 
+import jakarta.annotation.PostConstruct;
 import org.projectweather.client.WeatherRestClient;
 import org.projectweather.model.weatherApiDto.WeatherApiDto;
 import org.projectweather.model.weatherInCity.WeatherInCity;
 import org.projectweather.service.WeatherInCityServiceJDBCImpl;
 import org.projectweather.service.WeatherInCityServiceJPAImpl;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 
 import java.util.stream.Stream;
 
 import static org.projectweather.mapper.WeatherMapper.weatherApiToWeatherInCity;
 
 @Component
+@Profile("!Test")
 public class DataLoader {
 
     private final WeatherRestClient weatherRestClient;

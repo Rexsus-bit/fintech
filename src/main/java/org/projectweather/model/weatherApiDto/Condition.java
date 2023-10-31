@@ -12,5 +12,5 @@ import lombok.*;
 @ToString
 public class Condition {
     @JsonProperty("text")
-    String weatherType;
+    private String weatherType;
 }

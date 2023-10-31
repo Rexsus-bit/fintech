@@ -79,6 +79,7 @@ public class WeatherInCityServiceJPAImpl implements WeatherInCityService {
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteWeatherInCityById(Long id) {
+        weatherInCityJpaRepository.findById(id).orElseThrow(() -> new WeatherInCityIsNotFoundException(1L));
         weatherInCityJpaRepository.deleteById(id);
     }
 
