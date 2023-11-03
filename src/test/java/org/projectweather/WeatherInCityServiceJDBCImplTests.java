@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.List;
 
@@ -31,25 +30,21 @@ import static org.projectweather.util.RandomDataGenerator.*;
 public class WeatherInCityServiceJDBCImplTests {
 
     @Autowired
-    TransactionTemplate transactionTemplate;
+    private TransactionTemplate transactionTemplate;
 
     @Mock
-    WeatherInCityJDBCRepository mockWeatherInCityJDBCRepository;
+    private WeatherInCityJDBCRepository mockWeatherInCityJDBCRepository;
 
-    WeatherInCityService weatherInCityService;
-
-    SecureRandom rand;
-    String cityName;
-    String weatherTypeName;
-    Instant unixTime;
-
-    WeatherInCity weatherInCity1;
-    WeatherInCity weatherInCity2;
+    private WeatherInCityService weatherInCityService;
+    private String cityName;
+    private String weatherTypeName;
+    private Instant unixTime;
+    private WeatherInCity weatherInCity1;
+    private WeatherInCity weatherInCity2;
 
     @BeforeEach
     void setup() {
         weatherInCityService = new WeatherInCityServiceJDBCImpl(mockWeatherInCityJDBCRepository, transactionTemplate);
-        rand = new SecureRandom();
         cityName = getRandomString();
         weatherTypeName = getRandomString();
         unixTime = getRandomUnixTime();

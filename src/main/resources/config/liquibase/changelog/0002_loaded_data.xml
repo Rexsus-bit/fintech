@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet id="00000000000002" author="romanbizin">
+    <changeSet id="0002" author="romanbizin">
         <sql>
             INSERT INTO city (city_name)
             VALUES ('Moscow'),
@@ -19,6 +19,12 @@
                    ('Rainy'),
                    ('Cloudy'),
                    ('Snowy');
+
+            INSERT INTO users (username, password, enabled)
+            VALUES ('admin', '$2a$10$0zGgz1dN4MWhsPZBECzmMOBt9aSpazD/EWpx4u34aVQzF73xBUune', true);
+
+            INSERT INTO authorities (username, authority)
+            VALUES ('admin', 'ROLE_ADMIN');
         </sql>
 
     </changeSet>
