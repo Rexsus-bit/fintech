@@ -27,8 +27,7 @@ public class ControllerErrorHandler {
         return new ApiError(e.getMessage(),
                 NOT_FOUND,
                 HttpStatus.NOT_FOUND,
-                LocalDateTime.now(),
-                e.getStackTrace());
+                LocalDateTime.now());
     }
 
     @ExceptionHandler({WeatherIsExistedException.class})
@@ -37,8 +36,7 @@ public class ControllerErrorHandler {
         return new ApiError(e.getMessage(),
                 CONFLICT,
                 HttpStatus.CONFLICT,
-                LocalDateTime.now(),
-                e.getStackTrace());
+                LocalDateTime.now());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

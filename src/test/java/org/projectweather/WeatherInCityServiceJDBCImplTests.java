@@ -31,20 +31,18 @@ import static org.projectweather.util.RandomDataGenerator.*;
 public class WeatherInCityServiceJDBCImplTests {
 
     @Autowired
-    TransactionTemplate transactionTemplate;
+    private TransactionTemplate transactionTemplate;
 
     @Mock
-    WeatherInCityJDBCRepository mockWeatherInCityJDBCRepository;
+    private WeatherInCityJDBCRepository mockWeatherInCityJDBCRepository;
 
-    WeatherInCityService weatherInCityService;
-
-    SecureRandom rand;
-    String cityName;
-    String weatherTypeName;
-    Instant unixTime;
-
-    WeatherInCity weatherInCity1;
-    WeatherInCity weatherInCity2;
+    private WeatherInCityService weatherInCityService;
+    private SecureRandom rand;
+    private String cityName;
+    private  String weatherTypeName;
+    private Instant unixTime;
+    private WeatherInCity weatherInCity1;
+    private WeatherInCity weatherInCity2;
 
     @BeforeEach
     void setup() {
