@@ -26,7 +26,7 @@ public class WeatherController {
 
     private final WeatherService weatherService;
 
-    @GetMapping("{city}")
+    @GetMapping("/{city}")
     @ApiOperation("Метод возвращает все объекты Weather с сегодняшней датой")
     List<WeatherDto> getWeatherForTheCurrentDate(@PathVariable("city") Long regionId)
             throws WeatherIsNotFoundException {

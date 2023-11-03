@@ -37,13 +37,13 @@ import static org.projectweather.util.RandomDataGenerator.*;
 public class ContainerWeatherInCityServiceJDBCImplTests {
 
     @Container
-    public static GenericContainer<?> h2Container = new GenericContainer<>("oscarfonts/h2")
+    private final static GenericContainer<?> h2Container = new GenericContainer<>("oscarfonts/h2")
             .withEnv("H2_OPTIONS", "-ifNotExists")
             .withExposedPorts(1521)
             .waitingFor(Wait.defaultWaitStrategy());
 
     @DynamicPropertySource
-    static void dbProperties(DynamicPropertyRegistry registry) {
+    private static void dbProperties(DynamicPropertyRegistry registry) {
         String url = "jdbc:h2:tcp://" + h2Container.getHost() + ":" + h2Container.getFirstMappedPort() + "/test";
         registry.add("spring.datasource.url", () -> url);
         registry.add("spring.datasource.username", () -> "sa");
@@ -57,11 +57,11 @@ public class ContainerWeatherInCityServiceJDBCImplTests {
     private WeatherInCityJDBCRepository weatherInCityJDBCRepository;
 
     @Autowired
-    WeatherRestClient weatherRestClient;
+    private WeatherRestClient weatherRestClient;
 
-    WeatherInCity weatherInCity1;
-    WeatherInCity weatherInCity2;
-    String cityName;
+    private WeatherInCity weatherInCity1;
+    private WeatherInCity weatherInCity2;
+    private String cityName;
 
     @BeforeEach
     void setUp() {

@@ -8,21 +8,15 @@ import org.projectweather.model.weatherApiDto.WeatherApiDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.web.client.RestTemplate;
-import io.github.resilience4j.ratelimiter.RateLimiter;
 
 
-@SpringBootTest(properties = { "weather.api.url=http://127.0.0.1:8085" })
+@SpringBootTest(properties = {"weather.api.url=http://127.0.0.1:8085"})
 @AutoConfigureWireMock(port = 8085)
 public class WeatherRestClientTests {
 
 
     @Autowired
-    WeatherRestClient weatherRestClient;
-    @Autowired
-    RestTemplate restTemplate;
-    @Autowired
-    RateLimiter weatherRateLimiter;
+    private WeatherRestClient weatherRestClient;
 
     @Test
     public void ShouldReturnWeatherApiDtoTest() {

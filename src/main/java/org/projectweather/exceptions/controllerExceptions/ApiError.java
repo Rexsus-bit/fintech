@@ -15,5 +15,5 @@ public class ApiError {
     private String reason;
     private HttpStatus status;
     private LocalDateTime timestamp;
-    private StackTraceElement[] errors;
+
 }
