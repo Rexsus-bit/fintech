@@ -1,10 +1,8 @@
 package org.projectweather.client;
 
 import io.github.resilience4j.ratelimiter.RateLimiter;
-import lombok.AllArgsConstructor;
 import org.projectweather.model.weatherApiDto.WeatherApiDto;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;

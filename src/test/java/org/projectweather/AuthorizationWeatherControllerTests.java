@@ -1,14 +1,12 @@
 package org.projectweather;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.projectweather.exceptions.controllerExceptions.WeatherIsExistedException;
-import org.projectweather.exceptions.controllerExceptions.WeatherIsNotFoundException;
 import org.projectweather.model.Weather;
 import org.projectweather.model.WeatherDto;
+import org.projectweather.model.user.Role;
 import org.projectweather.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +14,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
@@ -25,27 +26,39 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.projectweather.mapper.WeatherMapper.toWeatherDto;
-import static org.projectweather.util.RandomDataGenerator.*;
+import static org.projectweather.util.RandomDataGenerator.getRandomLocalDateTime;
+import static org.projectweather.util.RandomDataGenerator.getRandomLongNumber;
+import static org.projectweather.util.RandomDataGenerator.getRandomNumberBetweenValues;
+import static org.projectweather.util.RandomDataGenerator.getRandomString;
 import static org.projectweather.util.RequestPostProcessorGenerator.getRequestPostProcessor;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(properties = {"weather.api.url=http://api.weatherapi.com"})
 @AutoConfigureMockMvc
-public class WeatherControllerTests {
+class AuthorizationWeatherControllerTests {
 
     @MockBean
     private WeatherService weatherService;
 
     @Autowired
+    private JdbcUserDetailsManager jdbcUserDetailsManager;
+
+    @Autowired
     private ObjectMapper mapper;
 
     @Autowired
-    private  MockMvc mvc;
+    private MockMvc mvc;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Value("${ADMIN_NAME}")
     private String adminName;
@@ -57,6 +70,8 @@ public class WeatherControllerTests {
     private WeatherDto weatherDto1;
     private Weather weather2;
     private List<Weather> list;
+    private String userName;
+    private String userPassword;
 
     @BeforeEach
     void setUp() {
@@ -66,6 +81,15 @@ public class WeatherControllerTests {
         weather2 = new Weather(getRandomLongNumber(), getRandomString(), (int) getRandomNumberBetweenValues(-50, 50),
                 getRandomLocalDateTime());
         list = List.of(weather1, weather2);
+
+        userName = getRandomString();
+        userPassword = getRandomString();
+        jdbcUserDetailsManager
+                .createUser(User.builder()
+                        .username(userName)
+                        .password(passwordEncoder.encode(userPassword))
+                        .roles(Role.USER.name())
+                        .build());
     }
 
     @Test
@@ -83,15 +107,14 @@ public class WeatherControllerTests {
                 .andExpect(jsonPath("$.regionId", is(weatherDto1.getRegionId()), Long.class))
                 .andExpect(jsonPath("$.regionName", is(weatherDto1.getRegionName()), String.class))
                 .andExpect(jsonPath("$.temperature", is(weatherDto1.getTemperature()), Integer.class))
-                .andExpect(jsonPath("$.localDateTime",is(weatherDto1.getLocalDateTime()
+                .andExpect(jsonPath("$.localDateTime", is(weatherDto1.getLocalDateTime()
                         .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))));
     }
 
     @Test
     void shouldFailCreateWeatherTest() throws Exception {
-        when(weatherService.createNewCity(weather1))
-                .thenThrow(new WeatherIsExistedException(weather1.getRegionId(), weather1.getLocalDateTime()));
-        RequestPostProcessor requestPostProcessor = getRequestPostProcessor(adminName, adminPassword);
+        when(weatherService.createNewCity(weather1)).thenReturn(weather1);
+        RequestPostProcessor requestPostProcessor = getRequestPostProcessor(userName, userPassword);
 
         mvc.perform(post("/api/wheather/{city}", weatherDto1.getRegionId())
                         .content(mapper.writeValueAsString(weatherDto1))
@@ -99,16 +122,13 @@ public class WeatherControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message",
-                        is(String.format("Объект Weather с id=%d localDateTime=%s уже существует.",
-                                weather1.getRegionId(), weather1.getLocalDateTime())), String.class));
+                .andExpect(status().isForbidden());
     }
 
     @Test
     void ShouldGetWeatherForTheCurrentDateTest() throws Exception {
         when(weatherService.getWeatherForTheCurrentDate(anyLong())).thenReturn(list);
-        RequestPostProcessor requestPostProcessor = getRequestPostProcessor(adminName, adminPassword);
+        RequestPostProcessor requestPostProcessor = getRequestPostProcessor(userName, userPassword);
 
         mvc.perform(get("/api/wheather/{city}", 1)
                         .with(requestPostProcessor)
@@ -120,27 +140,24 @@ public class WeatherControllerTests {
                 .andExpect(jsonPath("$.[0].regionId", is(weatherDto1.getRegionId()), Long.class))
                 .andExpect(jsonPath("$.[0].regionName", is(weatherDto1.getRegionName()), String.class))
                 .andExpect(jsonPath("$.[0].temperature", is(weatherDto1.getTemperature()), Integer.class))
-                .andExpect(jsonPath("$.[0].localDateTime",is(weatherDto1.getLocalDateTime()
+                .andExpect(jsonPath("$.[0].localDateTime", is(weatherDto1.getLocalDateTime()
                         .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))));
     }
 
     @Test
     void ShouldFailGetWeatherForTheCurrentDateTest() throws Exception {
-        when(weatherService.getWeatherForTheCurrentDate(anyLong()))
-                .thenThrow(new WeatherIsNotFoundException(weather1.getRegionId(), weather1.getLocalDateTime()
-                        .toLocalDate()));
-        RequestPostProcessor requestPostProcessor = getRequestPostProcessor(adminName, adminPassword);
+        when(weatherService.getWeatherForTheCurrentDate(anyLong())).thenReturn(list);
+
+        userName = getRandomString();
+        userPassword = getRandomString();
+        RequestPostProcessor requestPostProcessor = getRequestPostProcessor(userName, userPassword);
 
         mvc.perform(get("/api/wheather/{city}", weather1.getRegionId())
                         .with(requestPostProcessor)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message",
-                        is(String.format("Объект Weather с id=%d и date=%s не найден.",
-                        weather1.getRegionId(), weather1.getLocalDateTime().toLocalDate()
-                                .format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))), String.class));
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -158,15 +175,14 @@ public class WeatherControllerTests {
                 .andExpect(jsonPath("$.regionId", is(weatherDto1.getRegionId()), Long.class))
                 .andExpect(jsonPath("$.regionName", is(weatherDto1.getRegionName()), String.class))
                 .andExpect(jsonPath("$.temperature", is(weatherDto1.getTemperature()), Integer.class))
-                .andExpect(jsonPath("$.localDateTime",is(weatherDto1.getLocalDateTime()
+                .andExpect(jsonPath("$.localDateTime", is(weatherDto1.getLocalDateTime()
                         .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))));
     }
 
     @Test
     void ShouldFailUpdateWeatherTemperatureForTheCity() throws Exception {
-        when(weatherService.updateWeatherTemperatureForTheCity(weather1))
-                .thenThrow(new WeatherIsNotFoundException(weather1.getRegionId()));
-        RequestPostProcessor requestPostProcessor = getRequestPostProcessor(adminName, adminPassword);
+        when(weatherService.updateWeatherTemperatureForTheCity(weather1)).thenReturn(weather1);
+        RequestPostProcessor requestPostProcessor = getRequestPostProcessor(userName, userPassword);
 
         mvc.perform(put("/api/wheather/{city}", weather1.getRegionId())
                         .content(mapper.writeValueAsString(weatherDto1))
@@ -174,9 +190,7 @@ public class WeatherControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message", is(String.format("Объект Weather с id=%d не найден.",
-                        weather1.getRegionId())), String.class));
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -194,18 +208,19 @@ public class WeatherControllerTests {
 
     @Test
     void ShouldFailDeleteTheCity() throws Exception {
-        Mockito.doThrow(new WeatherIsNotFoundException(weather1.getRegionId()))
-                .when(weatherService).deleteTheCity(weather1.getRegionId());
-        RequestPostProcessor requestPostProcessor = getRequestPostProcessor(adminName, adminPassword);
+        Mockito.doNothing().when(weatherService).deleteTheCity(weather1.getRegionId());
+
+        userName = getRandomString();
+        userPassword = getRandomString();
+        RequestPostProcessor requestPostProcessor = getRequestPostProcessor(userName, userPassword);
 
         mvc.perform(delete("/api/wheather/{city}", weather1.getRegionId())
                         .with(requestPostProcessor)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message", is(String.format("Объект Weather с id=%d не найден.",
-                        weather1.getRegionId())), String.class));
+                .andExpect(status().isUnauthorized());
     }
 
 }
+
