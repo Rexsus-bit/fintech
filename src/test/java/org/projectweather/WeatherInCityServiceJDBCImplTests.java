@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.projectweather.util.RandomDataGenerator.*;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest(properties = {"weather.api.url=http://api.weatherapi.com"})
+@SpringBootTest
 public class WeatherInCityServiceJDBCImplTests {
 
     @Autowired

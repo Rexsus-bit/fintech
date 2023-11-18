@@ -1,6 +1,7 @@
 package org.projectweather.service;
 
 import lombok.RequiredArgsConstructor;
+import org.projectweather.cache.WeatherCache;
 import org.projectweather.exceptions.dataBaseQuriesExceptions.WeatherInCityIsAlreadyExistException;
 import org.projectweather.exceptions.dataBaseQuriesExceptions.WeatherInCityIsNotFoundException;
 import org.projectweather.model.weatherInCity.City;
@@ -23,6 +24,7 @@ public class WeatherInCityServiceJPAImpl implements WeatherInCityService {
     private final WeatherInCityJpaRepository weatherInCityJpaRepository;
     private final CityJpaRepository cityJpaRepository;
     private final WeatherTypeJpaRepository weatherTypeJpaRepository;
+    private final WeatherCache weatherCache;
 
     /**
      * Уровни изоляции выбраны также как в методах WeatherInCityServiceJDBCImpl
@@ -57,7 +59,15 @@ public class WeatherInCityServiceJPAImpl implements WeatherInCityService {
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public WeatherInCity findWeatherInCityById(Long id) {
-        return weatherInCityJpaRepository.findById(id).orElseThrow(() -> new WeatherInCityIsNotFoundException(id));
+        Optional<WeatherInCity> weatherInCityOpt = weatherCache.get(id);
+        if (weatherInCityOpt.isPresent()) {
+            return weatherInCityOpt.get();
+        } else {
+            WeatherInCity weatherInCity = weatherInCityJpaRepository
+                    .findById(id).orElseThrow(() -> new WeatherInCityIsNotFoundException(id));
+            weatherCache.save(weatherInCity);
+            return weatherInCity;
+        }
     }
 
     @Override
@@ -73,6 +83,7 @@ public class WeatherInCityServiceJPAImpl implements WeatherInCityService {
         if (!weatherInCityJpaRepository.existsById(weatherInCity.getId())) {
             throw new WeatherInCityIsNotFoundException(weatherInCity.getId());
         }
+        weatherCache.remove(weatherInCity.getId());
         return weatherInCityJpaRepository.save(weatherInCity);
     }
 
@@ -80,6 +91,7 @@ public class WeatherInCityServiceJPAImpl implements WeatherInCityService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteWeatherInCityById(Long id) {
         weatherInCityJpaRepository.findById(id).orElseThrow(() -> new WeatherInCityIsNotFoundException(1L));
+        weatherCache.remove(id);
         weatherInCityJpaRepository.deleteById(id);
     }
 
