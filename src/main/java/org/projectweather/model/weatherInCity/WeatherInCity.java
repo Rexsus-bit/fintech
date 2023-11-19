@@ -13,6 +13,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @ToString
 @Entity
+@EqualsAndHashCode
 @Table(name = "weather_in_city")
 public class WeatherInCity {
 

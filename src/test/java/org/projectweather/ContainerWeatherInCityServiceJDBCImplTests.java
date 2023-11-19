@@ -32,7 +32,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.projectweather.mapper.WeatherMapper.weatherApiDtoToWeatherInCity;
 import static org.projectweather.util.RandomDataGenerator.*;
 
-@SpringBootTest(properties = {"weather.api.url=http://api.weatherapi.com"})
+@SpringBootTest
 @Testcontainers
 public class ContainerWeatherInCityServiceJDBCImplTests {
 

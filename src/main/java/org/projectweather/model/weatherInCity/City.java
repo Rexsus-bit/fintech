@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Entity
+@EqualsAndHashCode
 @Table(name = "city")
 public class City {
 

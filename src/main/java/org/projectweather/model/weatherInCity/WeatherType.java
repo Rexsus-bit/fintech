@@ -11,6 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @Entity
+@EqualsAndHashCode
 @Table(name = "weather_type")
 public class WeatherType {
 
