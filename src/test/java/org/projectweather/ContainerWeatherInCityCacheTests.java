@@ -23,6 +23,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.projectweather.util.RandomDataGenerator.getRandomDoubleNumber;
 import static org.projectweather.util.RandomDataGenerator.getRandomString;
 import static org.projectweather.util.RandomDataGenerator.getRandomUnixTime;
 
@@ -64,13 +65,13 @@ public class ContainerWeatherInCityCacheTests {
     @BeforeAll
     static void setUp() {
         weatherInCity1 = new WeatherInCity(null, new City(null, getRandomString()),
-                new WeatherType(null, getRandomString()), getRandomUnixTime());
+                new WeatherType(null, getRandomString()), getRandomUnixTime(), getRandomDoubleNumber(-100, 100));
         weatherInCity2 = new WeatherInCity(null, new City(null, getRandomString()),
-                new WeatherType(null, getRandomString()), getRandomUnixTime());
+                new WeatherType(null, getRandomString()), getRandomUnixTime(), getRandomDoubleNumber(-100, 100));
         weatherInCity3 = new WeatherInCity(null, new City(null, getRandomString()),
-                new WeatherType(null, getRandomString()), getRandomUnixTime());
+                new WeatherType(null, getRandomString()), getRandomUnixTime(), getRandomDoubleNumber(-100, 100));
         weatherInCity4 = new WeatherInCity(null, new City(null, getRandomString()),
-                new WeatherType(null, getRandomString()), getRandomUnixTime());
+                new WeatherType(null, getRandomString()), getRandomUnixTime(), getRandomDoubleNumber(-100, 100));
     }
 
     @BeforeEach

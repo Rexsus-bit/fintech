@@ -14,7 +14,7 @@ import lombok.*;
 public class Current {
 
     @JsonProperty("temp_c")
-    private Integer temperature;
+    private Double temperature;
     private Condition condition;
 
 }

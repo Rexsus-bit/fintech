@@ -1,6 +1,5 @@
 package org.projectweather.util;
 
-import jakarta.annotation.PostConstruct;
 import org.projectweather.client.WeatherRestClient;
 import org.projectweather.model.weatherApiDto.WeatherApiDto;
 import org.projectweather.model.weatherInCity.WeatherInCity;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Stream;
 
-import static org.projectweather.mapper.WeatherMapper.weatherApiToWeatherInCity;
+import static org.projectweather.mapper.WeatherMapper.weatherApiDtoToWeatherInCity;
 
 @Component
 @Profile("!Test")
@@ -29,17 +28,16 @@ public class DataLoader {
         this.weatherInCityServiceJDBC = weatherInCityServiceJDBC;
     }
 
-    @PostConstruct
     public void loadDataIntoDataBaseOnStartup() {
-            loadDataJPAImp();
-            loadDataJDBCImp();
+        loadDataJPAImp();
+        loadDataJDBCImp();
     }
 
     public void loadDataJDBCImp() {
         Stream<String> citiesStream = Stream.of("Cardiff", "Moscow", "Saint Petersburg");
         citiesStream.forEach(cityName -> {
             WeatherApiDto weatherApiDto = weatherRestClient.requestWeather(cityName);
-            WeatherInCity weatherInCity = weatherApiToWeatherInCity(weatherApiDto);
+            WeatherInCity weatherInCity = weatherApiDtoToWeatherInCity(weatherApiDto);
             weatherInCityServiceJDBC.createWeatherInCity(weatherInCity);
         });
     }
@@ -48,7 +46,7 @@ public class DataLoader {
         Stream<String> citiesStream = Stream.of("Paris", "London", "Washington");
         citiesStream.forEach(cityName -> {
             WeatherApiDto weatherApiDto = weatherRestClient.requestWeather(cityName);
-            WeatherInCity weatherInCity = weatherApiToWeatherInCity(weatherApiDto);
+            WeatherInCity weatherInCity = weatherApiDtoToWeatherInCity(weatherApiDto);
             weatherInCityServiceJPAImpl.createWeatherInCity(weatherInCity);
         });
     }

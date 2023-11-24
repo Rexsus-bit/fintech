@@ -42,6 +42,7 @@ dependencies {
     implementation 'com.h2database:h2'
     implementation group: 'org.liquibase', name: 'liquibase-core', version: '4.24.0'
     implementation 'org.springframework.cloud:spring-cloud-contract-wiremock:4.0.3'
+    implementation 'org.springframework.kafka:spring-kafka:3.0.9'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 

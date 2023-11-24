@@ -33,6 +33,10 @@ public class RandomDataGenerator {
         return Math.abs(rand.nextLong());
     }
 
+    public static double getRandomDoubleNumber(double min, double max) {
+        return Math.round((min + new Random().nextDouble() * (max - min)) * 10.0) / 10.0;
+    }
+
     public static String getRandomCityName(){
         List<String> list = List.of("London", "Moscow", "Saint Petersburg", "Beijing", "Washington", "Berlin");
         Random random = new Random();
