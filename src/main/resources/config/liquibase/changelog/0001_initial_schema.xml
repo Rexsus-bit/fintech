@@ -30,6 +30,9 @@
             <column name="weather_datetime" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
+            <column name="weather_temp" type="numeric(4,1)">
+                <constraints nullable="true"/>
+            </column>
         </createTable>
 
         <createTable tableName="weather_type">

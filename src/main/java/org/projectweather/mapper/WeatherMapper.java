@@ -18,21 +18,10 @@ public class WeatherMapper {
         return new Weather(regionId, weatherDto.getRegionName(), weatherDto.getTemperature(),
                 weatherDto.getLocalDateTime());
     }
-    public static WeatherInCity weatherApiToWeatherInCity(WeatherApiDto weatherApiDto) {
-        return WeatherInCity.builder()
-                .city(City.builder()
-                        .name(weatherApiDto.getLocation().getName())
-                        .build())
-                .weatherType(WeatherType.builder()
-                        .name(weatherApiDto.getCurrent().getCondition().getWeatherType())
-                        .build())
-                .unixDateTime(weatherApiDto.getLocation().getUnixTime())
-                .build();
-    }
 
     public static WeatherInCity weatherApiDtoToWeatherInCity(WeatherApiDto weatherApiDto){
         return new WeatherInCity(null, new City(null, weatherApiDto.getLocation().getName()),
                 new WeatherType(null, weatherApiDto.getLocation().getName()),
-                weatherApiDto.getLocation().getUnixTime());
+                weatherApiDto.getLocation().getUnixTime(), weatherApiDto.getCurrent().getTemperature());
     }
 }

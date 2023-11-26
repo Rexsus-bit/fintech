@@ -29,5 +29,7 @@ public class WeatherInCity {
     private WeatherType weatherType;
     @Column(name = "weather_datetime")
     private Instant unixDateTime;
+    @Column(name = "weather_temp")
+    private Double temperature;
 
 }

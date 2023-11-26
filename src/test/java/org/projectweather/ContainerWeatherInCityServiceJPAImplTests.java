@@ -55,10 +55,10 @@ public class ContainerWeatherInCityServiceJPAImplTests {
     @BeforeEach
     void setUp() {
         weatherInCity1 = new WeatherInCity(null, new City(null, getRandomString()),
-                new WeatherType(null, getRandomString()), getRandomUnixTime());
+                new WeatherType(null, getRandomString()), getRandomUnixTime(), getRandomDoubleNumber(-100, 100));
 
         weatherInCity2 = new WeatherInCity(null, new City(null, getRandomString()),
-                new WeatherType(null, getRandomString()), getRandomUnixTime());
+                new WeatherType(null, getRandomString()), getRandomUnixTime(), getRandomDoubleNumber(-100, 100));
     }
 
     @Test

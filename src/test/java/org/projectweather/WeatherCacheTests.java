@@ -15,6 +15,7 @@ import java.util.stream.LongStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.projectweather.util.RandomDataGenerator.getRandomDoubleNumber;
 import static org.projectweather.util.RandomDataGenerator.getRandomLongNumber;
 import static org.projectweather.util.RandomDataGenerator.getRandomString;
 import static org.projectweather.util.RandomDataGenerator.getRandomUnixTime;
@@ -31,15 +32,20 @@ public class WeatherCacheTests {
     @BeforeAll
     static void setUp() {
         weatherInCity1 = new WeatherInCity(getRandomLongNumber(), new City(null, getRandomString()),
-                new WeatherType(getRandomLongNumber(), getRandomString()), getRandomUnixTime());
+                new WeatherType(getRandomLongNumber(), getRandomString()), getRandomUnixTime(),
+                getRandomDoubleNumber(-100, 100));
         weatherInCity2 = new WeatherInCity(getRandomLongNumber(), new City(null, getRandomString()),
-                new WeatherType(getRandomLongNumber(), getRandomString()), getRandomUnixTime());
+                new WeatherType(getRandomLongNumber(), getRandomString()), getRandomUnixTime(),
+                getRandomDoubleNumber(-100, 100));
         weatherInCity3 = new WeatherInCity(getRandomLongNumber(), new City(null, getRandomString()),
-                new WeatherType(getRandomLongNumber(), getRandomString()), getRandomUnixTime());
+                new WeatherType(getRandomLongNumber(), getRandomString()), getRandomUnixTime(),
+                getRandomDoubleNumber(-100, 100));
         weatherInCity4 = new WeatherInCity(getRandomLongNumber(), new City(null, getRandomString()),
-                new WeatherType(getRandomLongNumber(), getRandomString()), getRandomUnixTime());
+                new WeatherType(getRandomLongNumber(), getRandomString()), getRandomUnixTime(),
+                getRandomDoubleNumber(-100, 100));
         weatherInCity5 = new WeatherInCity(getRandomLongNumber(), new City(null, getRandomString()),
-                new WeatherType(getRandomLongNumber(), getRandomString()), getRandomUnixTime());
+                new WeatherType(getRandomLongNumber(), getRandomString()), getRandomUnixTime(),
+                getRandomDoubleNumber(-100, 100));
     }
 
     @RepeatedTest(100)
@@ -50,7 +56,7 @@ public class WeatherCacheTests {
         CountDownLatch countDownLatch = new CountDownLatch(size);
         try {
             LongStream.range(0, size).<Runnable>mapToObj(key -> () -> {
-                weatherCache.save(new WeatherInCity(key, null, null, null));
+                weatherCache.save(new WeatherInCity(key, null, null, null, null));
                 countDownLatch.countDown();
             }).forEach(executorService::submit);
             countDownLatch.await();
@@ -67,7 +73,8 @@ public class WeatherCacheTests {
         weatherCache.save(weatherInCity2);
         int cnt = weatherCache.getMaxCacheSize();
         for (long i = 1; i < cnt; i++) {
-            weatherCache.save(new WeatherInCity(getRandomLongNumber(), null, null, null));
+            weatherCache.save(new WeatherInCity(getRandomLongNumber(), null, null, null,
+                    null));
         }
         assertEquals(weatherCache.getMaxCacheSize(), weatherCache.size());
         assertTrue(weatherCache.get(weatherInCity1.getId()).isEmpty());
@@ -82,7 +89,8 @@ public class WeatherCacheTests {
         weatherCache.save(weatherInCity3);
         int cnt = weatherCache.getMaxCacheSize();
         for (long i = 3; i < cnt; i++) {
-            weatherCache.save(new WeatherInCity(getRandomLongNumber(), null, null, null));
+            weatherCache.save(new WeatherInCity(getRandomLongNumber(), null, null, null,
+                    null));
         }
 
         assertTrue(weatherCache.get(weatherInCity1.getId()).isPresent());

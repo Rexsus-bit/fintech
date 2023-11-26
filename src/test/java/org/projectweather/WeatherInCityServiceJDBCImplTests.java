@@ -50,10 +50,10 @@ public class WeatherInCityServiceJDBCImplTests {
         unixTime = getRandomUnixTime();
 
         weatherInCity1 = new WeatherInCity(getRandomLongNumber(), new City(getRandomLongNumber(), cityName),
-                new WeatherType(getRandomLongNumber(), weatherTypeName), unixTime);
+                new WeatherType(getRandomLongNumber(), weatherTypeName), unixTime, getRandomDoubleNumber(-100, 100));
 
         weatherInCity2 = new WeatherInCity(getRandomLongNumber(), new City(getRandomLongNumber(), cityName),
-                new WeatherType(getRandomLongNumber(), weatherTypeName), unixTime);
+                new WeatherType(getRandomLongNumber(), weatherTypeName), unixTime, getRandomDoubleNumber(-100, 100));
     }
 
     @Test
